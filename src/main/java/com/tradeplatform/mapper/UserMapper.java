@@ -17,7 +17,7 @@ public interface UserMapper {
 
     @Insert("insert into user(username, role, phone, create_time, update_time) " +
             "VALUES (#{username}, #{role}, #{phone}, #{create_time},#{update_time}/*now(), now()*/)")
-    public void insert(User user);
+    public int insert(User user);
 
     @Update("update user set username = #{username}, password = #{password}, role = #{role}," +
             " phone = #{phone}, update_time = #{update_time} where id = #{id}")
