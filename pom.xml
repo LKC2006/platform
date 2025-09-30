@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tradeplatform</groupId>
-    <artifactId>mybatis_start</artifactId>
+    <artifactId>platform</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mybatis_start</name>
-    <description>mybatis_start</description>
+    <name>platform</name>
+    <description>platform</description>
     <url/>
     <licenses>
         <license/>

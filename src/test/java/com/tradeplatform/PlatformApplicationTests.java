@@ -10,10 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @SpringBootTest
-class MybatisStartApplicationTests {
+class PlatformApplicationTests {
     @Autowired
     private ProductMapper productMapper;// 注入接口类型的对象
     @Autowired
@@ -22,7 +23,7 @@ class MybatisStartApplicationTests {
     private UserMapper userMapper;
 
     @Test
-    public void testListProduct(){
+    public void testListProduct() throws SQLException {
         List<Product> productList = productMapper.list();
         productList.stream().forEach(product -> {
             System.out.println(product);});//隐式调用to String()
