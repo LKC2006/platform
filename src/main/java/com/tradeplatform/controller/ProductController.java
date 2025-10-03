@@ -15,6 +15,8 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+
+
     @GetMapping("/product/select/24h")
     public List<Product> selectNear() throws SQLException {
         return productService.selectNear();

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.tradeplatform.mapper.ProductOrderMapper">
+    <insert id="placeOrder">
+        insert into product_order(product_id, buyer_id, status, create_time, update_time)
+            VALUES (#{productid}, #{buyerid}, '已下单', now(),now());
+    </insert>
+    <update id="alterStatus" >
+        update product
+        <set>
+            status = '已售出'
+        </set>
+            where id = #{productid}
+                  and status = '未售出'
+
+    </update>
+    <select id="getStatusForOrder" resultType="java.lang.String">
+
+        select status from product where id = #{productid}
+
+    </select>
+
+    <update id="cancelOrder" >
+        update product_order
+        <set>
+            status = '已取消',
+            update_time = now()
+        </set>
+        where product_id = #{productid}
+        and buyer_id = #{buyerid}
+        and status = '已下单'
+
+    </update>
+
+    <update id="rollBackStatus" >
+        update product
+        <set>
+            status = '未售出'
+        </set>
+        where id = #{productid}
+        and status = '已售出'
+
+    </update>
+</mapper>
+

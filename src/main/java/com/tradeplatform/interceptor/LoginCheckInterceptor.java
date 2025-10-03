@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginCheckInterceptor implements HandlerInterceptor {
     //先过滤后拦截
     @Override//前运行
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {//object handler
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
 //        log.info("{}", handler.getClass().getName());
         //获取请求url
