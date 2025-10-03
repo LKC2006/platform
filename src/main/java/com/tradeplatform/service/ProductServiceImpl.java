@@ -8,11 +8,53 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
+//按"类型（二手物品/代取需求）、价格范围、发布时间（如"24小时内新发布"）"筛选列表。
+//实现类
 @Service
-public class ProductServiceImpl implements ProductMapper {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Override
+    public List<Product> selectNear() throws SQLException {
+        try{
+            return productMapper.selectNear();
+        }catch(SQLException e){
+            throw new SQLException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Product> selectPrice(BigDecimal price1, BigDecimal price2) throws SQLException {
+        List<Product> productList;
+        try {
+            productList= productMapper.selectPrice(price1,price2);
+
+        }catch(SQLException e){
+            throw new SQLException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if(productList.size() == 0||productList== null){
+            throw new RuntimeException("There Is NO Product");
+        }//没有产品时返回提示到前端
+
+        return productList;
+    }
+
+    @Override
+    public List<Product> dynamicSelect(Product product) throws SQLException{
+        try{
+            return productMapper.dynamicSelect(product);//再次传入product
+        }catch(SQLException e){
+            throw new SQLException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public List<Product> list() throws SQLException {
@@ -90,6 +132,9 @@ public class ProductServiceImpl implements ProductMapper {
 
     @Override
     public int insert(Product product) throws SQLException {
+        if((product.getType()==null||!product.getType().equals("二手物品")&&!product.getType().equals("代取需求"))) {
+            throw new IllegalArgumentException("种类只能为“二手物品”或者“代取需求”");
+        }
         if((product.getStatus()==null||!product.getStatus().equals("未售出")&&!product.getStatus().equals("已售出"))) {
             throw new IllegalArgumentException("状态只能为“未售出”或者“已售出”");
         }
@@ -112,6 +157,9 @@ public class ProductServiceImpl implements ProductMapper {
     @Override
     public int update(Product product) throws SQLException {
         int amount;
+        if((product.getType()==null||!product.getType().equals("二手物品")&&!product.getType().equals("代取需求"))) {
+            throw new IllegalArgumentException("种类只能为“二手物品”或者“代取需求”");
+        }
         if((product.getStatus()==null||!product.getStatus().equals("未售出")&&!product.getStatus().equals("已售出"))) {
             throw new IllegalArgumentException("状态只能为“未售出”或者“已售出”");
         }

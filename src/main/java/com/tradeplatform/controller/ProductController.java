@@ -1,17 +1,34 @@
 package com.tradeplatform.controller;
 
 import com.tradeplatform.pojo.Product;
+import com.tradeplatform.service.ProductService;
 import com.tradeplatform.service.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;//controller调用service,service调用dao
 @RestController
 public class ProductController {
 
     @Autowired
-    ProductServiceImpl productService;
+    ProductService productService;
+
+    @GetMapping("/product/select/24h")
+    public List<Product> selectNear() throws SQLException {
+        return productService.selectNear();
+    }
+
+    @GetMapping("/product/select/price")
+    public List<Product> selectPrice(@RequestParam BigDecimal price1,@RequestParam BigDecimal price2) throws SQLException{
+        return productService.selectPrice(price1,price2);
+    }
+
+    @GetMapping("/product/dynamicselect")
+    public List<Product> dynamicSelect(@RequestBody Product product) throws SQLException {
+        return productService.dynamicSelect(product);//传入product，传出结果
+    }
 
     @GetMapping("/product/select/all")
     //@Override

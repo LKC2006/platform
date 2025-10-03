@@ -4,10 +4,15 @@ package com.tradeplatform.mapper;
 import com.tradeplatform.pojo.User;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
 public interface UserMapper {
+
+    @Select("select * from user where username = #{username} and password = #{password}")
+    public User login(String username,String password);
+
     @Select("select * from user")
     public List<User> list();
 

@@ -2,6 +2,7 @@ package com.tradeplatform.controller;
 
 import com.tradeplatform.mapper.UserMapper;
 import com.tradeplatform.pojo.User;
+import com.tradeplatform.service.UserService;
 import com.tradeplatform.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
 
     @GetMapping("/user/select/all")
 //    @Override
