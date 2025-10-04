@@ -7,12 +7,15 @@ import com.tradeplatform.service.ProductService;
 import com.tradeplatform.service.UserService;
 import com.tradeplatform.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
+
+@Slf4j
 @RestController
 public class UserController {
 
@@ -37,7 +40,7 @@ public class UserController {
     }
 
     @RequestMapping("/user/register")//注册接口
-    public String register(@RequestBody User user) {
+    public String register(@RequestBody User user) throws SQLException {
         if(userService.register(user) == 1) {
             return "User Registered Successfully";
         }
@@ -62,8 +65,7 @@ public class UserController {
 
         Result success = Result.complete("Role Altered 200");
         String res = JSONObject.toJSONString(success);
-        return ResponseEntity.status(200)
-                .body(res);
+        return ResponseEntity.status(200).body(res);
     }
 }
 

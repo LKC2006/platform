@@ -13,8 +13,5 @@ public interface UserService {
     public User login(String username, String password);
     public List<User> list();
     public void delete(Integer id);
-    public int register(User user);
-//    public void update(User user);
-
-
+    public int register(User user) throws SQLException;
 }
