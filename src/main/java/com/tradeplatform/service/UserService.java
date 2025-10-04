@@ -8,12 +8,13 @@ import java.util.List;
 
 public interface UserService {
 
+    public void toAdmin(Integer id);
 
     public User login(String username, String password);
     public List<User> list();
     public void delete(Integer id);
-    public int insert(User user);
-    public void update(User user);
+    public int register(User user);
+//    public void update(User user);
 
 
 }

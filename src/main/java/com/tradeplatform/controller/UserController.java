@@ -1,18 +1,26 @@
 package com.tradeplatform.controller;
 
-import com.tradeplatform.mapper.UserMapper;
+import com.alibaba.fastjson.JSONObject;
+import com.tradeplatform.pojo.Result;
 import com.tradeplatform.pojo.User;
+import com.tradeplatform.service.ProductService;
 import com.tradeplatform.service.UserService;
-import com.tradeplatform.service.UserServiceImpl;
+import com.tradeplatform.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 @RestController
 public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ProductService productService;
 
 
 
@@ -29,13 +37,34 @@ public class UserController {
     }
 
     @RequestMapping("/user/register")//注册接口
-    public String insert(@RequestBody User user) {
-        if(userService.insert(user) == 1) {
-            return "User Created";
+    public String register(@RequestBody User user) {
+        if(userService.register(user) == 1) {
+            return "User Registered Successfully";
         }
-        return "User Not Created";
+        return "Failed to Register, Something went wrong";
+    }
+
+    @RequestMapping("/user/toadmin")
+    public ResponseEntity<String> toAdmin(@RequestParam Integer id,
+                                          @RequestHeader(value = "token") String token) throws SQLException {
+        //鉴权
+        Claims claims = JwtUtils.parseToken(token);
+        Integer operatorid = claims.get("id",Integer.class);
+        String role = productService.selectRole(operatorid);
+        if(role.equals("USER")){//放行管理员
+            Result error = Result.fail("403权限不足");
+            String notaccessible = JSONObject.toJSONString(error);
+            return ResponseEntity.status(403)
+                        .body(notaccessible);
+        }
+
+        userService.toAdmin(id);
+
+        Result success = Result.complete("Role Altered 200");
+        String res = JSONObject.toJSONString(success);
+        return ResponseEntity.status(200)
+                .body(res);
     }
 }
-//@PathVariable 是从 URL 路径中获取参数（如 user/delete/7 中的 7），
-// 而 @RequestParam 是从 URL 的查询参数（Query String）中获取参数（如 user/delete?id=7 中的 7）。
+
 
