@@ -50,15 +50,4 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     public List<ProductOrder> list() {
         return productOrderMapper.list();
     }
-
-    @Override
-    public void delete(Integer id) {
-         productOrderMapper.delete(id);
-    }
-
-    @Override
-    public void insert(ProductOrder productOrder) {
-        productOrderMapper.insert(productOrder);
-
-    }
 }

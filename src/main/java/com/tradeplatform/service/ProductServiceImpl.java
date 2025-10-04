@@ -12,9 +12,20 @@ import java.util.List;
 //实现类
 @Service
 public class ProductServiceImpl implements ProductService {
-
     @Autowired
     private ProductMapper productMapper;
+
+    @Override
+    public Integer selectUserId(Integer productId) throws SQLException {
+        return productMapper.selectUserId(productId);
+    }
+
+    @Override
+    public String selectRole(Integer id) throws SQLException {
+
+        return productMapper.selectRole(id);
+    }
+
 
     @Override
     public List<Product> selectNear() throws SQLException {

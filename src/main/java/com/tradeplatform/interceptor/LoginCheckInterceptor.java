@@ -18,17 +18,9 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     @Override//前运行
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-//        log.info("{}", handler.getClass().getName());
         //获取请求url
         String url = request.getRequestURL().toString();
         log.info("url={}", url);
-
-//        //判断请求的url是否包含login
-//        if(url.contains("login")){
-//            log.info("login");
-//            return true;//放行
-//
-//        }
 
         //获取请求头中的令牌
         String jwt = request.getHeader("token");
@@ -36,10 +28,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         //判断令牌是否存在
         if(!StringUtils.hasLength(jwt)){
             log.info("user did not login");
-            Result error = Result.fail("User Did Not Login");
+            Result error = Result.fail("401未授权");
             //目前仍然不是json且无法自动转换
             String notlogin = JSONObject.toJSONString(error);
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(notlogin);
+            response.setStatus(401);
             return false;
         }
 
@@ -49,13 +43,14 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         }catch (Exception e){
             e.printStackTrace();
             log.info("Invalid Token");
-            Result error = Result.fail("User Did Not Login");
+            Result error = Result.fail("401未授权");
             //目前仍然不是json且无法自动转换
             String notlogin = JSONObject.toJSONString(error);
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(notlogin);
+            response.setStatus(401);
+            //response.getWriter().write("401未授权");//这个可以直接返回401未授权而不是result类型
             return false;
-
-
         }
 
         //放行

@@ -4,6 +4,20 @@
 
 
 <mapper namespace="com.tradeplatform.mapper.ProductMapper">
+
+    <select id="selectUserId" resultType="java.lang.Integer">
+
+        select publisher_id from product where id = #{id}
+
+    </select>
+
+
+    <select id="selectRole" resultType="java.lang.String">
+
+        select role from user where id = #{id}
+
+    </select>
+
     <select id="dynamicSelect" resultType="com.tradeplatform.pojo.Product">
         select * from product
         <where>

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,17 +17,23 @@ public class Result {
     String msg = "";
     String data = null;
 
-    public static Result success(String token){
+    public static Result success(String token) {
         Result result = new Result();
         result.code = 1;
         result.msg = "success";
         result.data = token;
         return result;
     }
-    public static Result fail(String message){
+
+    public static Result complete(String message) {
+        Result result = new Result();
+        result.code = 1;
+        result.msg = message;
+        return result;
+    }
+    public static Result fail(String message) {
         Result result = new Result();
         result.code = 0;
-//        result.msg = "fail";
         result.msg = message;
         return result;
     }

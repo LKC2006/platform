@@ -11,6 +11,10 @@ import java.util.List;
 @Mapper//数据访问层（dao）,自动创建接口的代理对象
 public interface ProductMapper {//自动生成实现类对象ProductMapper.list()
 
+    public Integer selectUserId(Integer productId);
+
+    public String selectRole(Integer id) throws SQLException;
+
     @Select("select * from product where publish_time between DATE_SUB(NOW(), INTERVAL 24 HOUR) and NOW()")
     public List<Product> selectNear() throws SQLException;
 

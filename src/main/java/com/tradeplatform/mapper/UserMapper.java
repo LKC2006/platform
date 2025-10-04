@@ -5,6 +5,7 @@ import com.tradeplatform.pojo.User;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 
 @Mapper
@@ -21,10 +22,10 @@ public interface UserMapper {
     public void delete(Integer id);
 
     @Insert("insert into user(username, role, phone, create_time, update_time) " +
-            "VALUES (#{username}, #{role}, #{phone}, #{create_time},#{update_time}/*now(), now()*/)")
+            "VALUES (#{username}, 'USER', #{phone}, #{create_time},#{update_time}/*now(), now()*/)")
     public int insert(User user);
 
-    @Update("update user set username = #{username}, password = #{password}, role = #{role}," +
+    @Update("update user set username = #{username}, password = #{password}, role = 'USER'," +
             " phone = #{phone}, update_time = #{update_time} where id = #{id}")
     public void update(User user);
 }

@@ -14,6 +14,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
+
+
     @GetMapping("/user/select/all")
 //    @Override
     public List<User> list() {
@@ -26,7 +28,7 @@ public class UserController {
         return "User Deleted";
     }
 
-    @RequestMapping("/user/create")
+    @RequestMapping("/user/register")//注册接口
     public String insert(@RequestBody User user) {
         if(userService.insert(user) == 1) {
             return "User Created";

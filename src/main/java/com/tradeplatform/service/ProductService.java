@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ProductService {
+
+    public Integer selectUserId(Integer productId) throws SQLException;
+    public String selectRole (Integer id) throws SQLException;
+
     public List<Product> selectNear() throws SQLException;
     public List<Product> selectPrice(BigDecimal price1,BigDecimal price2) throws SQLException;
     public List<Product> dynamicSelect(Product product) throws SQLException;

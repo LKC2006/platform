@@ -1,9 +1,13 @@
 package com.tradeplatform.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tradeplatform.pojo.Product;
+import com.tradeplatform.pojo.Result;
 import com.tradeplatform.service.ProductService;
-import com.tradeplatform.service.ProductServiceImpl;
+import com.tradeplatform.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -14,6 +18,7 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
 
 
 
@@ -55,39 +60,86 @@ public class ProductController {
 
     //根据id删除商品信息
     @RequestMapping("/product/delete")
-    public String delete(@RequestParam Integer id) throws SQLException {//绑定传入路径id到参数id
+    public ResponseEntity<String> delete(@RequestParam Integer id,
+                                         @RequestHeader(value = "token") String token)throws SQLException {//绑定传入路径id到参数id
+        Claims claims = JwtUtils.parseToken(token);
+        Integer userid = claims.get("id",Integer.class);
+        String role = productService.selectRole(userid);
         if(id == null||id <= 0){
-            return "Invalid id";
+            Result error = Result.fail("BadRequest");
+            String res = JSONObject.toJSONString(error);
+            return ResponseEntity.status(400)
+                    .body(res);
         }
         Product product = productService.selectById(id);
         if(product == null){
-            return "Product Doesn't Exist";
+            Result error = Result.fail("Product Doesn't Exist");
+            String res = JSONObject.toJSONString(error);
+            return ResponseEntity.status(404)
+                    .body(res);
+        }
+
+        if(role.equals("USER")){//不可以用==比较地址
+            if(productService.selectUserId(id) != userid){//商品卖家id和当前操作id
+                Result error = Result.fail("403权限不足");
+                //目前仍然不是json且无法自动转换
+                String notlogin = JSONObject.toJSONString(error);
+                return ResponseEntity.status(403)
+                        .body(notlogin);
+            }
         }
         int i = productService.delete(id);
-        if (i > 0) {
-            return i + " " + "Product(s) Deleted";
-        }
-        return "Products Not Deleted";//i=0表示没有对数据库进行操作，返回提示
+        Result success = Result.complete(i + "个商品删除成功200");
+        String res = JSONObject.toJSONString(success);
+        return ResponseEntity.status(200)
+                .body(res);
     }
 
     //新增商品信息
     @RequestMapping("/product/create")
-    public String insert(@RequestBody Product product) throws SQLException {
+    public ResponseEntity<String> insert(@RequestBody Product product,
+                                         @RequestHeader(value = "token") String token) throws SQLException {
+        //鉴权
+        Claims claims = JwtUtils.parseToken(token);
+        Integer id = claims.get("id",Integer.class);
+        String role = productService.selectRole(id);
+        if(role.equals("USER")){//不可以用==比较地址，放行管理员
+            if(product.getPublisher_id() != id){//不能以别人的号发布商品
+                Result error = Result.fail("403权限不足");
+                String notlogin = JSONObject.toJSONString(error);
+                return ResponseEntity.status(403)
+                        .body(notlogin);
+            }
+        }
 
         int i = productService.insert(product);
-        if (i > 0) {
-            return i + " " + "Product Created";
-        }
-        return "Product Not Created";//i=0表示没有对数据库进行操作，返回提示
+        Result success = Result.complete(i + "个商品添加成功201");
+        String res = JSONObject.toJSONString(success);
+        return ResponseEntity.status(201)
+                .body(res);
     }
 
     //更新商品信息
     @RequestMapping("/product/update")
-    public String update(@RequestBody Product product) throws SQLException {
-        int i = productService.update(product);
-        if (i > 0) {
-            return i + " " + "Product Updated";
+    public ResponseEntity<String> update(@RequestBody Product product,
+                                         @RequestHeader(value = "token") String token) throws SQLException {
+        //鉴权
+        Claims claims = JwtUtils.parseToken(token);
+        Integer id = claims.get("id",Integer.class);
+        String role = productService.selectRole(id);
+        if(role.equals("USER")){//放行管理员
+            if(product.getPublisher_id() != id){//不可以篡改别人发布的商品
+                Result error = Result.fail("403权限不足");
+                String notlogin = JSONObject.toJSONString(error);
+                return ResponseEntity.status(403)
+                        .body(notlogin);
+            }
         }
-        return "Product Not Updated";//i=0表示没有对数据库进行操作，返回提示
+
+        int i = productService.update(product);
+        Result success = Result.complete(i + "个商品修改成功200");
+        String res = JSONObject.toJSONString(success);
+        return ResponseEntity.status(200)
+                .body(res);
     }
 }

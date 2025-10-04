@@ -15,8 +15,4 @@ public interface ProductOrderService {
     public void alterStatus(Integer buyerid,Integer productid) throws SQLException;
 
     public List<ProductOrder> list();
-
-    public void delete(Integer id);
-
-    public void insert(ProductOrder productOrder);
 }
