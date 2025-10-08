@@ -3,7 +3,7 @@ package com.tradeplatform.service;
 import com.tradeplatform.mapper.UserMapper;
 import com.tradeplatform.pojo.Result;
 import com.tradeplatform.pojo.User;
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
-@Slf4j
+//@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 

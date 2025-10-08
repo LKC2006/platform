@@ -4,7 +4,7 @@ import com.tradeplatform.pojo.Result;
 import com.tradeplatform.pojo.User;
 import com.tradeplatform.service.UserService;
 import com.tradeplatform.utils.JwtUtils;
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static com.tradeplatform.pojo.Result.success;
 
-@Slf4j
+//@Slf4j
 @RestController
 public class LoginController {
 
@@ -29,7 +29,7 @@ public class LoginController {
             throw new RuntimeException( "Both Username and Password Cannot be null");
         }
         User userfull = userService.login(username,password);//有问题在这一行就会抛出
-        log.info("User {} Login Success",username);//在日志中显示登录
+        //log.info("User {} Login Success",username);//在日志中显示登录
         Map<String,Object> claims = new HashMap<>();//Map储存键值对，适合保存身份信息，Claims类就是一种Map
         claims.put("username",username);
         claims.put("id",userfull.getId());//向claims中加入两项，最终生成token，解码时可以调用

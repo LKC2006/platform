@@ -2,7 +2,7 @@ package com.tradeplatform.service;
 
 import com.tradeplatform.mapper.ProductMapper;
 import com.tradeplatform.pojo.Product;
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 //按"类型（二手物品/代取需求）、价格范围、发布时间（如"24小时内新发布"）"筛选列表。
 //实现类
-@Slf4j
+//@Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -139,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
     public List<String> getTitle() throws SQLException {
         List<String> productTitle;
         try{
-            log.info("Cache Failed To Cover");
+//            log.info("Cache Failed To Cover");
             productTitle = productMapper.getTitle();
         }catch (SQLException e){
             throw new SQLException(e);

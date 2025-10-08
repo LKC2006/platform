@@ -10,12 +10,12 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-@Slf4j
+//@Slf4j
 
 //有了拦截器，这个就放一边不参与正常的活动
 
@@ -32,11 +32,11 @@ public class AFilter implements jakarta.servlet.Filter {
 
         //获取请求url
         String url = req.getRequestURL().toString();
-        log.info("url={}", url);
+        //log.info("url={}", url);
 
         //判断请求的url是否包含login
         if(url.contains("login")){
-            log.info("login");
+            //log.info("login");
             chain.doFilter(request, response);//放行
             return;
         }
@@ -46,7 +46,7 @@ public class AFilter implements jakarta.servlet.Filter {
 
         //判断令牌是否存在
         if(!StringUtils.hasLength(jwt)){
-            log.info("user did not login");
+            //log.info("user did not login");
             Result error = Result.fail("User Did Not Login");
             //目前仍然不是json且无法自动转换
             String notlogin = JSONObject.toJSONString(error);//String类型的变量，但是内容符合JSON格式
@@ -59,7 +59,7 @@ public class AFilter implements jakarta.servlet.Filter {
             JwtUtils.parseToken(jwt);
         }catch (Exception e){
             e.printStackTrace();
-            log.info("Invalid Token");
+            //log.info("Invalid Token");
             Result error = Result.fail("User Did Not Login");
             //目前仍然不是json且无法自动转换
             String notlogin = JSONObject.toJSONString(error);
@@ -71,7 +71,7 @@ public class AFilter implements jakarta.servlet.Filter {
 
         //放行
 
-        log.info("Valid Token") ;
+        //log.info("Valid Token") ;
         chain.doFilter(request,response);//放行
 
 
