@@ -10,9 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.SQLException;
-import java.util.List;
-
 @SpringBootTest
 class PlatformApplicationTests {
     @Autowired
@@ -21,33 +18,5 @@ class PlatformApplicationTests {
     private ProductOrderMapper productOrderMapper;
     @Autowired
     private UserMapper userMapper;
-
-    @Test
-    public void testListProduct() throws SQLException {
-        List<Product> productList = productMapper.list();
-        productList.stream().forEach(product -> {
-            System.out.println(product);});//隐式调用to String()
-    }
-    @Test
-    public void testListProductOrder(){
-        List<ProductOrder> productOrderList = productOrderMapper.list();
-        productOrderList.stream().forEach(productorder -> {
-            System.out.println(productorder);});
-    }
-    @Test
-    public void testListUser(){
-        List<User> userList = userMapper.list();
-        userList.stream().forEach(user -> {
-            System.out.println(user);});
-    }
-    @Test
-    public void testDeleteUser(){
-        //int delete =
-        userMapper.delete(3);
-        //System.out.println(delete);
-    }
-
-//    void contextLoads() {
-//    }
 
 }

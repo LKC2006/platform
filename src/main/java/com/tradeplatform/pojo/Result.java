@@ -25,12 +25,14 @@ public class Result {
         return result;
     }
 
+    //下面两个相互对应
     public static Result complete(String message) {
         Result result = new Result();
         result.code = 1;
         result.msg = message;
         return result;
     }
+
     public static Result fail(String message) {
         Result result = new Result();
         result.code = 0;

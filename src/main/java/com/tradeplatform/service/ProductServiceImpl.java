@@ -19,12 +19,14 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductMapper productMapper;
 
-    @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    //辅助方法，根据产品返回用户，给其他方法调用
+    @Override//表示实现类重写接口方法
+    @Cacheable(value = "productCache", key = "'allProducts'")//缓存
     public Integer selectUserId(Integer productId) throws SQLException {
         return productMapper.selectUserId(productId);
     }
 
+    //辅助，根据用户ID返回角色，辅助鉴权
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public String selectRole(Integer id) throws SQLException {
@@ -32,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.selectRole(id);
     }
 
-
+    //24h以内的产品
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public List<Product> selectNear() throws SQLException {
@@ -45,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    //根据价格区间查询
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public List<Product> selectPrice(BigDecimal price1, BigDecimal price2) throws SQLException {
@@ -64,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
         return productList;
     }
 
+    //动态查询
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public List<Product> dynamicSelect(Product product) throws SQLException{
@@ -76,6 +80,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    //查询所有产品
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public List<Product> list() throws SQLException {
@@ -95,6 +100,7 @@ public class ProductServiceImpl implements ProductService {
         return productList;
     }
 
+    //根据输入标题查询详情
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public List<Product> selectByTitle(String title) throws SQLException {
@@ -112,6 +118,7 @@ public class ProductServiceImpl implements ProductService {
         return productList;
     }
 
+    //根据ID查询
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public Product selectById(Integer id) throws SQLException {
@@ -126,6 +133,7 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    //查询列表（无详情）
     @Override
     @Cacheable(value = "productCache", key = "'allProducts'")
     public List<String> getTitle() throws SQLException {
@@ -141,6 +149,7 @@ public class ProductServiceImpl implements ProductService {
         return productTitle;
     }
 
+    //删除产品
     @Override
     @CacheEvict(value = "productCache", key = "'allProducts'")
     public int delete(Integer id) throws SQLException {
@@ -153,9 +162,9 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException(e);
         }
         return result;
-
     }
 
+    //新增产品
     @Override
     @CacheEvict(value = "productCache", key = "'allProducts'")
     public int insert(Product product) throws SQLException {
@@ -181,6 +190,7 @@ public class ProductServiceImpl implements ProductService {
         return amount;
     }
 
+    //更新产品
     @Override
     @CacheEvict(value = "productCache", key = "'allProducts'")
     public int update(Product product) throws SQLException {

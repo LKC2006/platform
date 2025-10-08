@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
         userMapper.toAdmin(id);
     }
 
+    //登录
     @Override
     public User login(String username, String password){
 
@@ -38,17 +39,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //查询全部
     @Override
     public List<User> list() {
         return userMapper.list();
     }
 
+    //删除
     @Override
     public void delete(Integer id) {
         userMapper.delete(id);
-
     }
 
+    //注册
     @Override
     public int register(User user) throws SQLException {
          if(user.getPhone().length()!=11){//电话号码只能为11位

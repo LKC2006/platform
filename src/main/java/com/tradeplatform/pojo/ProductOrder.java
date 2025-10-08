@@ -16,6 +16,8 @@ public class ProductOrder {
     private LocalDateTime create_time = LocalDateTime.now();
     private LocalDateTime update_time = LocalDateTime.now();
 
+    //有了lombok不需要的getter setter 和 构造方法
+
 //    public long getId() {
 //        return id;
 //    }

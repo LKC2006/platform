@@ -16,6 +16,9 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 
 @Slf4j
+
+//有了拦截器，这个就放一边不参与正常的活动
+
 //@WebFilter(urlPatterns = "/*")
 @WebFilter(urlPatterns = "/filter")
 public class AFilter implements jakarta.servlet.Filter {

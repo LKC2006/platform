@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.tradeplatform.pojo.Result.fail;
 import static com.tradeplatform.pojo.Result.success;
 
 @Slf4j
@@ -21,6 +20,7 @@ public class LoginController {
     @Autowired
     UserService userService;
 
+    //登录接口
     @PostMapping ("/user/login")
     public Result login(@RequestBody User user){
         String username = user.getUsername();
@@ -30,7 +30,7 @@ public class LoginController {
         }
         User userfull = userService.login(username,password);//有问题在这一行就会抛出
         log.info("User {} Login Success",username);//在日志中显示登录
-        Map<String,Object> claims = new HashMap<>();
+        Map<String,Object> claims = new HashMap<>();//Map储存键值对，适合保存身份信息，Claims类就是一种Map
         claims.put("username",username);
         claims.put("id",userfull.getId());//向claims中加入两项，最终生成token，解码时可以调用
         String jwt = JwtUtils.generateToken(claims);

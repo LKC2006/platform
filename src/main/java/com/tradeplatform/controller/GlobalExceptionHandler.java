@@ -12,24 +12,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
     public String handleException(IllegalArgumentException e) {
+
         return e.getMessage();//自动捕获这一种exception,获取后面参数信息
     }
 
     @ExceptionHandler(SQLException.class)
     @ResponseBody
     public String handleDbException(SQLException e) {
+
         return "Database Error";
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public String handleException(RuntimeException e) {
+
         return e.getMessage();
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
     public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
+
         return ResponseEntity.status(401).body(e.getMessage());
     }
 }

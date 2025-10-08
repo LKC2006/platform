@@ -11,13 +11,13 @@
 
     </select>
 
-
     <select id="selectRole" resultType="java.lang.String">
 
         select role from user where id = #{id}
 
     </select>
 
+<!--    应该是误报的报错，动态筛选，有则加条件-->
     <select id="dynamicSelect" resultType="com.tradeplatform.pojo.Product">
         select * from product
         <where>
@@ -27,9 +27,6 @@
             <if test="type != null">
                 type = #{type}
             </if>
-<!--            <if test="price != null">-->
-<!--                price <= #{price}-->
-<!--            </if>-->
             <if test="status != null">
                 status = #{status}
             </if>

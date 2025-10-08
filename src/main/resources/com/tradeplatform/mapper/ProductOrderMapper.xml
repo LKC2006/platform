@@ -4,6 +4,8 @@
 
 
 <mapper namespace="com.tradeplatform.mapper.ProductOrderMapper">
+
+<!--    下单-->
     <insert id="placeOrder">
         insert into product_order(product_id, buyer_id, status, create_time, update_time)
             VALUES (#{productid}, #{buyerid}, '已下单', now(),now());
@@ -23,6 +25,8 @@
 
     </select>
 
+
+<!--    取消订单-->
     <update id="cancelOrder" >
         update product_order
         <set>
@@ -34,7 +38,6 @@
         and status = '已下单'
 
     </update>
-
     <update id="rollBackStatus" >
         update product
         <set>

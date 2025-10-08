@@ -25,40 +25,40 @@ public class UserController {
     @Autowired
     ProductService productService;
 
-
-
+    //查询所有用户
     @GetMapping("/user/select/all")
-//    @Override
     public List<User> list() {
         return userService.list();
     }
 
+    //删掉某个用户
     @RequestMapping("/user/delete")
     public String delete(@RequestParam Integer id) {//绑定传入路径id到参数id
         userService.delete(id);
         return "User Deleted";
     }
 
-    @RequestMapping("/user/register")//注册接口
+    //注册接口
+    @RequestMapping("/user/register")
     public String register(@RequestBody User user) throws SQLException {
         if(userService.register(user) == 1) {
             return "User Registered Successfully";
         }
-        return "Failed to Register, Something went wrong";
+        return "Failed To Register, Something Went Wrong";
     }
 
+    //管理员升级USER为ADMIN
     @RequestMapping("/user/toadmin")
     public ResponseEntity<String> toAdmin(@RequestParam Integer id,
                                           @RequestHeader(value = "token") String token) throws SQLException {
         //鉴权
-        Claims claims = JwtUtils.parseToken(token);
+        Claims claims = JwtUtils.parseToken(token);//一个JSON对象，保存身份信息，Claims类更适合JWT
         Integer operatorid = claims.get("id",Integer.class);
         String role = productService.selectRole(operatorid);
         if(role.equals("USER")){//放行管理员
             Result error = Result.fail("403权限不足");
             String notaccessible = JSONObject.toJSONString(error);
-            return ResponseEntity.status(403)
-                        .body(notaccessible);
+            return ResponseEntity.status(403).body(notaccessible);
         }
 
         userService.toAdmin(id);

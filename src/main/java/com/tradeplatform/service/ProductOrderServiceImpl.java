@@ -13,6 +13,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Autowired
     private ProductOrderMapper productOrderMapper;
 
+    //删除订单的两个操作
     @Override
     public void cancelOrder(Integer buyerid, Integer productid) throws SQLException {
         String status = productOrderMapper.getStatusForOrder(productid);
@@ -22,12 +23,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }
         throw new RuntimeException("Order Not In Progress");
     }
-
     @Override
     public void rollBackStatus(Integer productid) throws SQLException {
         productOrderMapper.rollBackStatus(productid);
     }
 
+    //下单的两个操作
     @Override
     public void placeOrder(Integer buyerid, Integer productid) throws SQLException {
         String status = productOrderMapper.getStatusForOrder(productid);
@@ -39,13 +40,13 @@ public class ProductOrderServiceImpl implements ProductOrderService {
             throw new RuntimeException("Product Already Sold");
         }
     }
-
     @Override
     public void alterStatus(Integer buyerid, Integer productid) throws SQLException {
         productOrderMapper.alterStatus(buyerid, productid);
         //这个在xml文件中比较容易核验
     }
 
+    //查询所有订单
     @Override
     public List<ProductOrder> list() {
         return productOrderMapper.list();

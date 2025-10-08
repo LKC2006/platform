@@ -22,6 +22,7 @@ public class ProductOrderController{
     @Autowired
     ProductService productService;//为了通过商品id查出发布者id
 
+    //取消订单
     @RequestMapping("/cancelorder")
     public ResponseEntity<String> cancelOrder (@RequestParam Integer buyerid, @RequestParam Integer productid,
                                                @RequestHeader(value = "token") String token) throws SQLException {
@@ -43,10 +44,10 @@ public class ProductOrderController{
 
         Result success = Result.complete("Order Cancelled 200");
         String res = JSONObject.toJSONString(success);
-        return ResponseEntity.status(200)
-                .body(res);
+        return ResponseEntity.status(200).body(res);
     }
 
+    //下单操作
     @RequestMapping("/placeorder")
     public ResponseEntity<String> placeOrder (@RequestParam Integer buyerid, @RequestParam Integer productid,
                                               @RequestHeader(value = "token") String token) throws SQLException {
@@ -59,8 +60,7 @@ public class ProductOrderController{
             if(productService.selectUserId(productid) == buyerid){//不能买自己的东西
                 Result error = Result.fail("403权限不足，不能买自己发布的商品");
                 String notaccessible = JSONObject.toJSONString(error);
-                return ResponseEntity.status(403)
-                        .body(notaccessible);
+                return ResponseEntity.status(403).body(notaccessible);
             }
         }
 
@@ -69,11 +69,11 @@ public class ProductOrderController{
 
         Result success = Result.complete("Order Placed Successfully 200");
         String res = JSONObject.toJSONString(success);
-        return ResponseEntity.status(200)
-                .body(res);
+        return ResponseEntity.status(200).body(res);
     }
 
-    @GetMapping("/productorder/select/all")//查询所有订单
+    //查询所有订单
+    @GetMapping("/productorder/select/all")
     public List<ProductOrder> list() {
         return productOrderService.list();
     }
