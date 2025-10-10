@@ -106,11 +106,17 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> selectByTitle(String title) throws SQLException {
         List<Product> productList;
         try{
+            System.out.println("===== 准备执行 SQL：selectByTitle，参数 title：" + title + " =====");
             productList = productMapper.selectByTitle(title);
-
+            System.out.println("===== SQL 执行成功，返回数据数量：" + (productList == null ? 0 : productList.size()) + " =====");
+            if (productList != null && !productList.isEmpty()) {
+                System.out.println("===== 准备缓存数据，第一条数据标题：" + productList.get(0).getTitle() + " =====");
+            }
         }catch (SQLException e){
             throw new SQLException(e);
         } catch (Exception e) {
+            System.err.println("===== selectByTitle 执行失败！异常信息如下 =====");
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         if(productList == null||productList.size() == 0){

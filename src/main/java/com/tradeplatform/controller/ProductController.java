@@ -48,6 +48,8 @@ public class ProductController {
     @GetMapping("/product/select")
     public List<Product> selectByTitle(@RequestParam String title) throws SQLException {
         try {
+            System.out.println("controller" + title);
+
             return productService.selectByTitle(title);
         }catch (Exception e){
             e.printStackTrace();
