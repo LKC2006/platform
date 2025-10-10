@@ -47,7 +47,13 @@ public class ProductController {
     //根据标题查询商品详情,可以查询多个（返回List）
     @GetMapping("/product/select")
     public List<Product> selectByTitle(@RequestParam String title) throws SQLException {
-        return productService.selectByTitle(title);
+        try {
+            return productService.selectByTitle(title);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("controller错误");
+            return null;
+        }
     }
 
     //查询商品列表

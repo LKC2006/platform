@@ -21,14 +21,14 @@ public class ProductServiceImpl implements ProductService {
 
     //辅助方法，根据产品返回用户，给其他方法调用
     @Override//表示实现类重写接口方法
-    @Cacheable(value = "productCache", key = "'allProducts'")//缓存
+    @Cacheable(value = "productCache", key = "'userId:' + #productId")//缓存
     public Integer selectUserId(Integer productId) throws SQLException {
         return productMapper.selectUserId(productId);
     }
 
     //辅助，根据用户ID返回角色，辅助鉴权
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    @Cacheable(value = "productCache", key = "'userRole:' + #id")
     public String selectRole(Integer id) throws SQLException {
 
         return productMapper.selectRole(id);
@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
 
     //24h以内的产品
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    @Cacheable(value = "productCache", key = "'product:near'")
     public List<Product> selectNear() throws SQLException {
         try{
             return productMapper.selectNear();
@@ -49,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
 
     //根据价格区间查询
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    @Cacheable(value = "productCache", key = "'product:price:' + #price1 + '-' + #price2")
     public List<Product> selectPrice(BigDecimal price1, BigDecimal price2) throws SQLException {
         List<Product> productList;
         try {
@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
 
     //动态查询
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    //@Cacheable(value = "productCache", key = "'products:titles'")
     public List<Product> dynamicSelect(Product product) throws SQLException{
         try{
             return productMapper.dynamicSelect(product);//再次传入product
@@ -102,11 +102,12 @@ public class ProductServiceImpl implements ProductService {
 
     //根据输入标题查询详情
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    @Cacheable(value = "productCache", key = "'productByTitle:' + #title")
     public List<Product> selectByTitle(String title) throws SQLException {
         List<Product> productList;
         try{
             productList = productMapper.selectByTitle(title);
+
         }catch (SQLException e){
             throw new SQLException(e);
         } catch (Exception e) {
@@ -119,8 +120,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     //根据ID查询
+
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    @Cacheable(value = "productCache", key = "'productsById:' + #id")
     public Product selectById(Integer id) throws SQLException {
         Product product;
         try{
@@ -135,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
 
     //查询列表（无详情）
     @Override
-    @Cacheable(value = "productCache", key = "'allProducts'")
+    @Cacheable(value = "productCache", key = "'allTitles'")
     public List<String> getTitle() throws SQLException {
         List<String> productTitle;
         try{
@@ -151,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
 
     //删除产品
     @Override
-    @CacheEvict(value = "productCache", key = "'allProducts'")
+    @CacheEvict(value = "productCache", allEntries = true)
     public int delete(Integer id) throws SQLException {
         int result;
         try{
@@ -166,7 +168,7 @@ public class ProductServiceImpl implements ProductService {
 
     //新增产品
     @Override
-    @CacheEvict(value = "productCache", key = "'allProducts'")
+    @CacheEvict(value = "productCache", allEntries = true)
     public int insert(Product product) throws SQLException {
         if((product.getType()==null||!product.getType().equals("二手物品")&&!product.getType().equals("代取需求"))) {
             throw new IllegalArgumentException("种类只能为“二手物品”或者“代取需求”");
@@ -192,7 +194,7 @@ public class ProductServiceImpl implements ProductService {
 
     //更新产品
     @Override
-    @CacheEvict(value = "productCache", key = "'allProducts'")
+    @CacheEvict(value = "productCache", allEntries = true)
     public int update(Product product) throws SQLException {
         int amount;
         if((product.getType()==null||!product.getType().equals("二手物品")&&!product.getType().equals("代取需求"))) {

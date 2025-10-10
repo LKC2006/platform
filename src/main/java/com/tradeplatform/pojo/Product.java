@@ -31,6 +31,8 @@ public class Product {//实体类
         this.update_time = update_time;
     }
 
+    public Product() {}
+
     public long getId() {
         return id;
     }
