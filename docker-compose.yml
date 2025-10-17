@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: tradeplatform
+    networks:
+        - platform-network
+  redis:
+    image: redis:8.2.2
+    container_name: redis
+    restart: always
+    networks:
+      - platform-network
+  app:
+    build: .
+    container_name: platform1
+    restart: always
+    ports:
+        - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/tradeplatform?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - platform-network
+
+networks:
+  platform-network:
+    driver: bridge

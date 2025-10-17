@@ -21,7 +21,7 @@ import java.time.Duration;
 @Configuration
 public class RedisConfig {
 
-    private static final String REDIS_HOST = "127.0.0.1";
+    private static final String REDIS_HOST = "redis";
     private static final int REDIS_PORT = 6379;
 //    private static final String REDIS_PASSWORD = "123456";
 
