@@ -18,6 +18,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     @Override//前运行
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        String requestURI = request.getRequestURI();
+        if (requestURI.equals("/") || requestURI.equals("/index.html") || requestURI.startsWith("/static/")) {
+            return true;
+        }
+        if ("OPTIONS".equals(request.getMethod())) return true;
+
         //获取请求url
         String url = request.getRequestURL().toString();
         //log.info("url={}", url);

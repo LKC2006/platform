@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 @MapperScan("com.tradeplatform.mapper")
 public class PlatformApplication {
     public static void main(String[] args) {
-        SpringApplication.run(PlatformApplication.class, args);}
+        SpringApplication.run(PlatformApplication.class, args);
+    }
 }
 

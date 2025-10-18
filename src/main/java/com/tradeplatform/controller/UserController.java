@@ -33,18 +33,18 @@ public class UserController {
 
     //删掉某个用户
     @RequestMapping("/user/delete")
-    public String delete(@RequestParam Integer id) {//绑定传入路径id到参数id
+    public Result delete(@RequestParam Integer id) {//绑定传入路径id到参数id
         userService.delete(id);
-        return "User Deleted";
+        return Result.complete( "User Deleted");
     }
 
     //注册接口
     @RequestMapping("/user/register")
-    public String register(@RequestBody User user) throws SQLException {
+    public Result register(@RequestBody User user) throws SQLException {
         if(userService.register(user) == 1) {
-            return "User Registered Successfully";
+            return Result.complete( "User Registered Successfully");
         }
-        return "Failed To Register, Something Went Wrong";
+        return Result.fail( "Failed To Register, Something Went Wrong");
     }
 
     //管理员升级USER为ADMIN

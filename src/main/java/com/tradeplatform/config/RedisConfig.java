@@ -21,9 +21,9 @@ import java.time.Duration;
 @Configuration
 public class RedisConfig {
 
-    private static final String REDIS_HOST = "redis";
+    private static final String REDIS_HOST = "localhost";
     private static final int REDIS_PORT = 6379;
-//    private static final String REDIS_PASSWORD = "123456";
+    private static final String REDIS_PASSWORD = "123456";
 
     //配置Redis连接工厂（Lettuce RESP2 协议）
     @Bean
@@ -32,7 +32,7 @@ public class RedisConfig {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
         redisConfig.setHostName(REDIS_HOST);
         redisConfig.setPort(REDIS_PORT);
-        //redisConfig.setPassword(REDIS_PASSWORD);
+        redisConfig.setPassword(REDIS_PASSWORD);
 
         //Lettuce 客户端配置
         ClientOptions clientOptions = ClientOptions.builder()
