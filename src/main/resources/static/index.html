@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品交易系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { background-color: #2563eb; color: white; }
+        .tab-btn:not(.active) { background-color: #e5e7eb; color: #374151; }
+        .tab-btn:hover:not(.active) { background-color: #d1d5db; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- 顶部导航 -->
+<header class="bg-white shadow fixed w-full top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-blue-600">📦 商品交易系统/前端乃豆包大作，改了真久</h1>
+        <div id="userNav" class="flex items-center gap-4">
+            <span id="currentUser" class="hidden text-gray-700"></span>
+            <button id="logoutBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">退出登录</button>
+        </div>
+    </div>
+</header>
+
+<!-- 主内容区 -->
+<main class="container mx-auto px-4 pt-20 pb-16">
+    <!-- 消息提示框 -->
+    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md text-white font-medium z-50 hidden transition-all duration-300">
+        <i class="fa fa-info-circle mr-2"></i>
+        <span id="msgText"></span>
+    </div>
+
+    <!-- 标签页切换按钮 -->
+    <div class="flex flex-wrap gap-2 my-6">
+        <button class="tab-btn active px-4 py-2 rounded transition" data-tab="auth">登录/注册</button>
+        <button class="tab-btn px-4 py-2 rounded transition" data-tab="user">用户管理</button>
+        <button class="tab-btn px-4 py-2 rounded transition" data-tab="product">商品管理</button>
+        <button class="tab-btn px-4 py-2 rounded transition" data-tab="order">订单管理</button>
+    </div>
+
+    <!-- 1. 登录/注册标签页 -->
+    <div class="tab-content active" id="auth-tab">
+        <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- 登录表单 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-6 text-center text-gray-800">用户登录</h2>
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="loginUsername">用户名</label>
+                        <input type="text" id="loginUsername" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="loginPassword">密码</label>
+                        <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                        <i class="fa fa-sign-in mr-2"></i>登录
+                    </button>
+                </form>
+            </div>
+
+            <!-- 注册表单 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-6 text-center text-gray-800">用户注册</h2>
+                <form id="registerForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="regUsername">用户名</label>
+                        <input type="text" id="regUsername" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="regPassword">密码</label>
+                        <input type="password" id="regPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="regPhone">手机号</label>
+                        <input type="tel" id="regPhone" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+                        <i class="fa fa-user-plus mr-2"></i>注册
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 用户管理标签页 -->
+    <div class="tab-content" id="user-tab">
+        <div class="max-w-6xl mx-auto space-y-6">
+            <!-- 设为管理员 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">设置管理员</h2>
+                <form id="toAdminForm" class="flex gap-4 items-end max-w-md">
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-1" for="adminUserId">用户ID</label>
+                        <input type="number" id="adminUserId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+                        <i class="fa fa-shield mr-2"></i>设为管理员
+                    </button>
+                </form>
+            </div>
+
+            <!-- 查询所有用户 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">所有用户列表</h2>
+                    <button id="queryAllUsers" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        <i class="fa fa-search mr-2"></i>查询用户
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-3 border-b text-left">用户ID</th>
+                            <th class="px-4 py-3 border-b text-left">用户名</th>
+                            <th class="px-4 py-3 border-b text-left">手机号</th>
+                            <th class="px-4 py-3 border-b text-left">角色</th>
+                        </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        <tr>
+                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">点击上方"查询用户"加载数据</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 删除用户 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">删除用户</h2>
+                <form id="deleteUserForm" class="flex gap-4 items-end max-w-md">
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-1" for="deleteUserId">用户ID</label>
+                        <input type="number" id="deleteUserId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                        <i class="fa fa-trash mr-2"></i>删除用户
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 商品管理标签页 -->
+    <div class="tab-content" id="product-tab">
+        <div class="max-w-6xl mx-auto space-y-6">
+            <!-- 商品查询区域 -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 24小时内商品 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">24小时内新增商品</h3>
+                    <button id="query24hProducts" class="w-full bg-blue-600 text-white py-2 rounded mb-4 hover:bg-blue-700 transition">
+                        <i class="fa fa-clock-o mr-2"></i>查询最新商品
+                    </button>
+                    <div id="24hProductsList" class="max-h-60 overflow-y-auto space-y-2">
+                        <div class="text-center text-gray-500 py-4">点击查询加载数据</div>
+                    </div>
+                </div>
+
+                <!-- 价格区间查询 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">价格区间查询</h3>
+                    <form id="priceQueryForm" class="space-y-3 mb-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm mb-1" for="minPrice">最低价格</label>
+                            <input type="number" step="0.01" id="minPrice" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm mb-1" for="maxPrice">最高价格</label>
+                            <input type="number" step="0.01" id="maxPrice" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+                            <i class="fa fa-filter mr-2"></i>查询
+                        </button>
+                    </form>
+                    <div id="priceProductsList" class="max-h-40 overflow-y-auto space-y-2">
+                        <div class="text-center text-gray-500 py-2">查询后显示结果</div>
+                    </div>
+                </div>
+
+                <!-- 商品标题列表 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">所有商品标题</h3>
+                    <button id="queryAllTitles" class="w-full bg-blue-600 text-white py-2 rounded mb-4 hover:bg-blue-700 transition">
+                        <i class="fa fa-list mr-2"></i>加载标题
+                    </button>
+                    <div id="allTitlesList" class="max-h-60 overflow-y-auto space-y-2">
+                        <div class="text-center text-gray-500 py-4">点击加载数据</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品详情查询 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">查询商品详情</h2>
+                </div>
+                <form id="productDetailForm" class="flex gap-4 items-end max-w-2xl mb-6">
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-1" for="productTitle">商品标题</label>
+                        <input type="text" id="productTitle" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        <i class="fa fa-info-circle mr-2"></i>查询详情
+                    </button>
+                </form>
+                <div id="productDetailContainer" class="border rounded p-4 hidden">
+                    <h3 class="text-lg font-bold mb-3 text-gray-800">商品详情</h3>
+                    <pre id="productDetailContent" class="whitespace-pre-wrap max-h-60 overflow-y-auto text-gray-700"></pre>
+                </div>
+            </div>
+
+            <!-- 新增商品 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-6 text-gray-800">新增商品</h2>
+                <form id="addProductForm" class="grid md:grid-cols-2 gap-4 max-w-4xl">
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="newProductTitle">商品标题</label>
+                        <input type="text" id="newProductTitle" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="newProductType">商品类型</label>
+                        <select id="newProductType" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">选择类型</option>
+                            <option value="二手物品">二手物品</option>
+                            <option value="代取需求">代取需求</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="newProductPrice">商品价格</label>
+                        <input type="number" step="0.01" id="newProductPrice" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1" for="newPublisherId">发布者ID（当前用户ID）</label>
+                        <input type="number" id="newPublisherId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" readonly required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 mb-1" for="newProductDesc">商品描述</label>
+                        <textarea id="newProductDesc" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 mb-1" for="newProductStatus">商品状态</label>
+                        <select id="newProductStatus" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="未售出">未售出</option>
+                            <option value="已售出">已售出</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+                            <i class="fa fa-plus-circle mr-2"></i>新增商品
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 更新/删除商品 -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 更新商品表单：最终正确版本 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-6 text-gray-800">更新商品/能更改，没法返回结果</h2>
+                    <form id="updateProductForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="updateProductId">商品ID</label>
+                            <input type="number" id="updateProductId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="updateProductTitle">新标题</label>
+                            <input type="text" id="updateProductTitle" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="updateProductDesc">新描述</label>
+                            <textarea id="updateProductDesc" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="updateProductType">新类型</label>
+                            <select id="updateProductType" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="二手物品">二手物品</option>
+                                <option value="代取需求">代取需求</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="updateProductPrice">新价格</label>
+                            <input type="number" step="0.01" id="updateProductPrice"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   inputmode="decimal" required>
+                            <p class="text-xs text-gray-500 mt-1">请输入数字（最多2位小数）</p>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="updateProductStatus">新状态</label>
+                            <select id="updateProductStatus" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="未售出">未售出</option>
+                                <option value="已售出">已售出</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                            <i class="fa fa-edit mr-2"></i>更新商品
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 删除商品 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-6 text-gray-800">删除商品</h2>
+                    <form id="deleteProductForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="deleteProductId">商品ID</label>
+                            <input type="number" id="deleteProductId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
+                            <i class="fa fa-trash mr-2"></i>删除商品
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 订单管理标签页 -->
+    <div class="tab-content" id="order-tab">
+        <div class="max-w-6xl mx-auto space-y-6">
+            <!-- 下单/取消订单 -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 下单表单 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-6 text-center text-gray-800">创建订单</h2>
+                    <form id="createOrderForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="orderBuyerId">买家ID</label>
+                            <input type="number" id="orderBuyerId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="orderProductId">商品ID</label>
+                            <input type="number" id="orderProductId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+                            <i class="fa fa-shopping-cart mr-2"></i>确认下单
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 取消订单表单 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-6 text-center text-gray-800">取消订单</h2>
+                    <form id="cancelOrderForm" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="cancelBuyerId">买家ID</label>
+                            <input type="number" id="cancelBuyerId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1" for="cancelProductId">商品ID</label>
+                            <input type="number" id="cancelProductId" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
+                            <i class="fa fa-times-circle mr-2"></i>取消订单
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 查询所有订单 -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">所有订单列表</h2>
+                    <button id="queryAllOrders" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        <i class="fa fa-list-alt mr-2"></i>查询订单
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-3 border-b text-left">订单ID</th>
+                            <th class="px-4 py-3 border-b text-left">买家ID</th>
+                            <th class="px-4 py-3 border-b text-left">商品ID</th>
+                            <th class="px-4 py-3 border-b text-left">订单状态</th>
+                            <th class="px-4 py-3 border-b text-left">创建时间</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">点击上方"查询订单"加载数据</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // 全局配置
+    const API_BASE = 'http://47.109.204.208:8080';
+    let token = localStorage.getItem('token') || '';
+    let currentUser = {
+        id: localStorage.getItem('userId') || '',
+        username: localStorage.getItem('username') || '',
+        role: localStorage.getItem('role') || 'USER'
+    };
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+        initTabs();
+        bindAllEvents();
+        updateLoginStatus();
+        // 自动填充当前用户ID到发布者ID字段
+        if (currentUser.id) {
+            document.getElementById('newPublisherId').value = currentUser.id;
+            document.getElementById('updatePublisherId').value = currentUser.id;
+        }
+    });
+
+    // 1. 标签页切换初始化
+    function initTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 切换按钮状态
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // 切换内容区域
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+
+                // 未登录拦截（除了登录/注册页）
+                if (tabId !== 'auth' && !token) {
+                    showMsg('请先登录后操作！', 'error');
+                    setTimeout(() => {
+                        document.querySelector('.tab-btn[data-tab="auth"]').click();
+                    }, 1500);
+                }
+            });
+        });
+    }
+
+    // 2. 绑定所有表单/按钮事件
+    function bindAllEvents() {
+        // 登录/注册
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('registerForm').addEventListener('submit', handleRegister);
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+        // 用户管理
+        document.getElementById('toAdminForm').addEventListener('submit', handleToAdmin);
+        document.getElementById('queryAllUsers').addEventListener('click', queryAllUsers);
+        document.getElementById('deleteUserForm').addEventListener('submit', handleDeleteUser);
+
+        // 商品管理
+        document.getElementById('query24hProducts').addEventListener('click', query24hProducts);
+        document.getElementById('priceQueryForm').addEventListener('submit', queryProductsByPrice);
+        document.getElementById('queryAllTitles').addEventListener('click', queryAllProductTitles);
+        document.getElementById('productDetailForm').addEventListener('submit', queryProductDetail);
+        document.getElementById('addProductForm').addEventListener('submit', handleAddProduct);
+        document.getElementById('updateProductForm').addEventListener('submit', handleUpdateProduct);
+        document.getElementById('deleteProductForm').addEventListener('submit', handleDeleteProduct);
+
+        // 订单管理
+        document.getElementById('createOrderForm').addEventListener('submit', handleCreateOrder);
+        document.getElementById('cancelOrderForm').addEventListener('submit', handleCancelOrder);
+        document.getElementById('queryAllOrders').addEventListener('click', queryAllOrders);
+    }
+
+    // 3. 通用工具函数
+    /**
+     * 显示消息提示
+     * @param {string} text - 消息内容
+     * @param {string} type - 类型：success/error/warning
+     */
+    function showMsg(text, type = 'success') {
+        const msgBox = document.getElementById('msgBox');
+        const msgText = document.getElementById('msgText');
+        msgText.textContent = text;
+
+        // 设置样式
+        msgBox.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500', 'hidden');
+        switch(type) {
+            case 'error':
+                msgBox.classList.add('bg-red-500');
+                msgBox.innerHTML = `<i class="fa fa-exclamation-circle mr-2"></i>${text}`;
+                break;
+            case 'warning':
+                msgBox.classList.add('bg-yellow-500');
+                msgBox.innerHTML = `<i class="fa fa-warning mr-2"></i>${text}`;
+                break;
+            default:
+                msgBox.classList.add('bg-green-500');
+                msgBox.innerHTML = `<i class="fa fa-check-circle mr-2"></i>${text}`;
+        }
+
+        // 3秒后隐藏
+        setTimeout(() => {
+            msgBox.classList.add('hidden');
+        }, 3000);
+    }
+
+    /**
+     * 获取请求头（带token）
+     * @returns {Object} 请求头对象
+     */
+    function getRequestHeaders() {
+        return {
+            'Content-Type': 'application/json',
+            'token': token || ''
+        };
+    }
+
+    /**
+     * 解析后端响应（兼容Result和直接返回的List）
+     * @param {Response} response - 响应对象
+     * @returns {Object|Array} 解析后的数据
+     */
+    async function parseResponse(response) {
+        try {
+            const rawData = await response.text();
+            // 尝试解析为JSON
+            try {
+                return JSON.parse(rawData);
+            } catch (e) {
+                // 非JSON格式（如纯字符串）
+                return { code: 0, msg: rawData };
+            }
+        } catch (e) {
+            return { code: 0, msg: '响应解析失败' };
+        }
+    }
+
+    /**
+     * 更新登录状态
+     */
+    function updateLoginStatus() {
+        if (token && currentUser.username) {
+            document.getElementById('currentUser').textContent = `当前用户：${currentUser.username}（${currentUser.role}）`;
+            document.getElementById('currentUser').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+        } else {
+            document.getElementById('currentUser').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+        }
+    }
+
+    // 4. 登录/注册/退出相关
+    /**
+     * 处理登录
+     * @param {Event} e - 事件对象
+     */
+    async function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+
+        try {
+            const response = await fetch(`${API_BASE}/user/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await parseResponse(response);
+            if (response.ok && result.code === 1 && result.data) {
+                // 存储token和用户信息
+                token = result.data;
+                localStorage.setItem('token', token);
+                // 解析token获取用户ID（JWT格式：header.payload.signature）
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                currentUser.id = payload.id;
+                currentUser.username = username;
+                // 暂时默认角色为USER，如需精准角色需调用接口查询
+                currentUser.role = 'USER';
+                localStorage.setItem('userId', currentUser.id);
+                localStorage.setItem('username', currentUser.username);
+
+                showMsg('登录成功！');
+                updateLoginStatus();
+                // 自动填充发布者ID
+                document.getElementById('newPublisherId').value = currentUser.id;
+                document.getElementById('updatePublisherId').value = currentUser.id;
+                // 切换到商品管理页
+                document.querySelector('.tab-btn[data-tab="product"]').click();
+                // 重置表单
+                document.getElementById('loginForm').reset();
+            } else {
+                showMsg(result.msg || '登录失败', 'error');
+            }
+        } catch (err) {
+            console.error('登录错误：', err);
+            showMsg('登录失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 处理注册
+     * @param {Event} e - 事件对象
+     */
+    async function handleRegister(e) {
+        e.preventDefault();
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+
+        try {
+            const response = await fetch(`${API_BASE}/user/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, phone })
+            });
+
+            const result = await parseResponse(response);
+            if (response.ok && result.code === 1) {
+                showMsg('注册成功，请登录！');
+                document.getElementById('registerForm').reset();
+                // 切换到登录表单
+                document.querySelector('.tab-btn[data-tab="auth"]').click();
+            } else {
+                showMsg(result.msg || '注册失败', 'error');
+            }
+        } catch (err) {
+            console.error('注册错误：', err);
+            showMsg('注册失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 处理退出登录
+     */
+    function handleLogout() {
+        // 清除本地存储
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+        // 重置全局变量
+        token = '';
+        currentUser = { id: '', username: '', role: 'USER' };
+        // 更新状态
+        showMsg('已退出登录');
+        updateLoginStatus();
+        // 切换到登录页
+        document.querySelector('.tab-btn[data-tab="auth"]').click();
+    }
+
+    // 5. 用户管理相关
+    /**
+     * 设为管理员
+     * @param {Event} e - 事件对象
+     */
+    async function handleToAdmin(e) {
+        e.preventDefault();
+        const userId = document.getElementById('adminUserId').value.trim();
+
+        try {
+            const response = await fetch(`${API_BASE}/user/toadmin?id=${userId}`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const result = await parseResponse(response);
+            if (response.ok && result.code === 1) {
+                showMsg('设置管理员成功！');
+                document.getElementById('toAdminForm').reset();
+                // 刷新用户列表
+                queryAllUsers();
+            } else {
+                showMsg(result.msg || '设置失败（可能无管理员权限）', 'error');
+            }
+        } catch (err) {
+            console.error('设置管理员错误：', err);
+            showMsg('设置失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 查询所有用户
+     */
+    async function queryAllUsers() {
+        try {
+            const response = await fetch(`${API_BASE}/user/select/all`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const userList = await parseResponse(response);
+            const tableBody = document.getElementById('userTableBody');
+
+            if (response.ok && Array.isArray(userList)) {
+                if (userList.length > 0) {
+                    tableBody.innerHTML = userList.map(user => `
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 border-b">${user.id}</td>
+                                <td class="px-4 py-3 border-b">${user.username}</td>
+                                <td class="px-4 py-3 border-b">${user.phone || '无'}</td>
+                                <td class="px-4 py-3 border-b">${user.role || 'USER'}</td>
+                            </tr>
+                        `).join('');
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">无用户数据</td></tr>';
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-red-500">查询失败</td></tr>';
+                showMsg('查询用户失败', 'error');
+            }
+        } catch (err) {
+            console.error('查询用户错误：', err);
+            showMsg('查询用户失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 处理删除用户
+     * @param {Event} e - 事件对象
+     */
+    async function handleDeleteUser(e) {
+        e.preventDefault();
+        const userId = document.getElementById('deleteUserId').value.trim();
+
+        try {
+            const response = await fetch(`${API_BASE}/user/delete?id=${userId}`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const result = await parseResponse(response);
+            if (response.ok && result.code === 1) {
+                showMsg('用户删除成功！');
+                document.getElementById('deleteUserForm').reset();
+                // 刷新用户列表
+                queryAllUsers();
+            } else {
+                showMsg(result.msg || '删除失败', 'error');
+            }
+        } catch (err) {
+            console.error('删除用户错误：', err);
+            showMsg('删除失败：网络异常', 'error');
+        }
+    }
+
+    // 6. 商品管理相关
+    /**
+     * 查询24小时内商品
+     */
+    async function query24hProducts() {
+        try {
+            const response = await fetch(`${API_BASE}/product/select/24h`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const productList = await parseResponse(response);
+            const listContainer = document.getElementById('24hProductsList');
+
+            if (response.ok && Array.isArray(productList)) {
+                if (productList.length > 0) {
+                    listContainer.innerHTML = productList.map(p => `
+                            <div class="p-2 border-b hover:bg-gray-50">
+                                <div class="font-medium">${p.title}</div>
+                                <div class="text-sm text-gray-600">价格：￥${p.price} | 状态：${p.status}</div>
+                            </div>
+                        `).join('');
+                } else {
+                    listContainer.innerHTML = '<div class="text-center text-gray-500 py-4">24小时内无新增商品</div>';
+                }
+            } else {
+                listContainer.innerHTML = '<div class="text-center text-red-500 py-4">查询失败</div>';
+                showMsg('查询24小时商品失败', 'error');
+            }
+        } catch (err) {
+            console.error('查询24小时商品错误：', err);
+            showMsg('查询失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 按价格区间查询商品
+     * @param {Event} e - 事件对象
+     */
+    async function queryProductsByPrice(e) {
+        e.preventDefault();
+        const price1 = document.getElementById('minPrice').value.trim();
+        const price2 = document.getElementById('maxPrice').value.trim();
+
+        if (Number(price1) > Number(price2)) {
+            showMsg('最低价格不能大于最高价格', 'warning');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/product/select/price?price1=${price1}&price2=${price2}`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const productList = await parseResponse(response);
+            const listContainer = document.getElementById('priceProductsList');
+
+            if (response.ok && Array.isArray(productList)) {
+                if (productList.length > 0) {
+                    listContainer.innerHTML = productList.map(p => `
+                            <div class="p-2 border-b hover:bg-gray-50">
+                                <div class="font-medium">${p.title}</div>
+                                <div class="text-sm text-gray-600">价格：￥${p.price}</div>
+                            </div>
+                        `).join('');
+                } else {
+                    listContainer.innerHTML = '<div class="text-center text-gray-500 py-2">该价格区间无商品</div>';
+                }
+            } else {
+                listContainer.innerHTML = '<div class="text-center text-red-500 py-2">查询失败</div>';
+                showMsg('价格区间查询失败', 'error');
+            }
+        } catch (err) {
+            console.error('价格区间查询错误：', err);
+            showMsg('查询失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 查询所有商品标题
+     */
+    async function queryAllProductTitles() {
+        try {
+            const response = await fetch(`${API_BASE}/product/select/title`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const titleList = await parseResponse(response);
+            const listContainer = document.getElementById('allTitlesList');
+
+            if (response.ok && Array.isArray(titleList)) {
+                if (titleList.length > 0) {
+                    listContainer.innerHTML = titleList.map(title => `
+                            <div class="p-2 border-b hover:bg-gray-50 cursor-pointer" onclick="document.getElementById('productTitle').value='${title}'">
+                                ${title}
+                            </div>
+                        `).join('');
+                } else {
+                    listContainer.innerHTML = '<div class="text-center text-gray-500 py-4">无商品标题</div>';
+                }
+            } else {
+                listContainer.innerHTML = '<div class="text-center text-red-500 py-4">查询失败</div>';
+                showMsg('查询商品标题失败', 'error');
+            }
+        } catch (err) {
+            console.error('查询商品标题错误：', err);
+            showMsg('查询失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 查询商品详情
+     * @param {Event} e - 事件对象
+     */
+    async function queryProductDetail(e) {
+        e.preventDefault();
+        const title = document.getElementById('productTitle').value.trim();
+        const detailContainer = document.getElementById('productDetailContainer');
+        const detailContent = document.getElementById('productDetailContent');
+
+        try {
+            const response = await fetch(`${API_BASE}/product/select?title=${encodeURIComponent(title)}`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const productList = await parseResponse(response);
+            if (response.ok && Array.isArray(productList)) {
+                detailContainer.classList.remove('hidden');
+                if (productList.length > 0) {
+                    // 格式化JSON显示
+                    detailContent.textContent = JSON.stringify(productList[0], null, 2);
+                } else {
+                    detailContent.textContent = '未查询到该商品的详情';
+                }
+            } else {
+                detailContainer.classList.remove('hidden');
+                detailContent.textContent = '查询失败：' + (productList.msg || '未知错误');
+                showMsg('查询商品详情失败', 'error');
+            }
+        } catch (err) {
+            console.error('查询商品详情错误：', err);
+            detailContainer.classList.remove('hidden');
+            detailContent.textContent = '查询失败：网络异常';
+            showMsg('查询失败：网络异常', 'error');
+        }
+    }
+
+    /**
+     * 处理新增商品
+     * @param {Event} e - 事件对象
+     */
+    async function handleAddProduct(e) {
+        e.preventDefault();
+        const product = {
+            title: document.getElementById('newProductTitle').value.trim(),
+            type: document.getElementById('newProductType').value.trim(),
+            price: parseFloat(document.getElementById('newProductPrice').value.trim()),
+            publisher_id: parseInt(document.getElementById('newPublisherId').value.trim()),
+            description: document.getElementById('newProductDesc').value.trim(),
+            status: document.getElementById('newProductStatus').value.trim()
+        };
+
+        // 验证参数
+        if (!product.title || !product.type || isNaN(product.price) || !product.publisher_id) {
+            showMsg('标题、类型、价格、发布者ID不能为空，价格必须是数字！', 'warning');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/product/create`, {
+                method: 'POST',
+                headers: getRequestHeaders(),
+                body: JSON.stringify(product)
+            });
+
+            const result = await parseResponse(response);
+            if (response.ok && result.code === 1) {
+                showMsg('商品新增成功！');
+                document.getElementById('addProductForm').reset();
+                // 重新填充发布者ID
+                document.getElementById('newPublisherId').value = currentUser.id;
+                // 刷新商品标题列表
+                queryAllProductTitles();
+            } else {
+                showMsg(result.msg || '新增失败（可能无权限）', 'error');
+            }
+        } catch (err) {
+            console.error('新增商品错误：', err);
+            showMsg('新增失败：网络异常', 'error');
+        }
+    }
+
+    // 最终修复版：更新商品函数（直接替换原handleUpdateProduct）
+    // 最终动态获取版：和Postman 100%一致，动态收集参数
+    async function handleUpdateProduct(e) {
+        e.preventDefault();
+        // 1. 从localStorage获取token（关键！）
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showMsg('请先登录！', 'error');
+            return;
+        }
+
+        // 2. 动态收集参数
+        const product = {
+            id: parseInt(document.getElementById('updateProductId').value.trim()),
+            title: document.getElementById('updateProductTitle').value.trim(),
+            description: document.getElementById('updateProductDesc').value.trim(),
+            type: document.getElementById('updateProductType').value.trim(),
+            price: parseFloat(document.getElementById('updateProductPrice').value.trim()),
+            status: document.getElementById('updateProductStatus').value.trim()
+        };
+
+        // 3. 参数校验
+        const errors = [];
+        if (isNaN(product.id) || product.id <= 0) errors.push('商品ID必须是有效正数');
+        if (!product.title.trim()) errors.push('标题不能为空');
+        if (!product.description.trim()) errors.push('描述不能为空');
+        if (!['二手物品', '代取需求'].includes(product.type)) errors.push('类型只能是"二手物品"或"代取需求"');
+        if (isNaN(product.price) || product.price < 0 || product.price > 999999) errors.push('价格必须是0-999999的数字');
+        if (!['未售出', '已售出'].includes(product.status)) errors.push('状态只能是"未售出"或"已售出"');
+        if (errors.length > 0) {
+            showMsg(`参数错误：${errors.join('、')}`, 'error');
+            return;
+        }
+
+        try {
+            const requestBody = JSON.stringify(product);
+            console.log('请求token：', token); // 确认token不为空且正确
+            console.log('请求体：', requestBody);
+
+            const response = await fetch(`${API_BASE}/product/update`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'token': token, // 用localStorage的token
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                },
+                body: requestBody
+            });
+
+            const rawResponse = await response.text();
+            console.log('响应状态：', response.status);
+            console.log('响应体：', rawResponse);
+
+            let result = JSON.parse(rawResponse);
+            if (response.status === 200 && result.code === 1) {
+                showMsg('更新成功！', 'success');
+                document.getElementById('updateProductForm').reset();
+            } else if (response.status === 401) {
+                showMsg('登录已过期，请重新登录！', 'error');
+                localStorage.removeItem('token'); // 清除无效token
+            } else if (response.status === 403) {
+                showMsg('无权限（仅发布者可更新）', 'error');
+            } else {
+                showMsg(`更新失败：${result.msg}`, 'error');
+            }
+        } catch (err) {
+            console.error('错误：', err);
+            showMsg('网络异常，请重试', 'error');
+        }
+    }
+    /**
+     * 处理删除商品
+     * @param {Event} e - 事件对象
+     */
+    async function handleDeleteProduct(e) {
+        e.preventDefault();
+        const productId = document.getElementById('deleteProductId').value.trim();
+
+        if (!productId || productId <= 0) {
+            showMsg('请输入合法的商品ID！', 'warning');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/product/delete?id=${productId}`, {
+                method: 'GET',
+                headers: getRequestHeaders()
+            });
+
+            const result = await parseResponse(response);
+            if (response.ok && result.code === 1) {
+                showMsg('商品删除成功！');
+                document.getElementById('deleteProductForm').reset();
+                // 刷新商品标题列表
+                queryAllProductTitles();
+            } else {
+                showMsg(result.msg || '删除失败（可能无权限或商品不存在）', 'error');
+            }
+        } catch (err) {
+            console.error('删除商品错误：', err);
+            showMsg('删除失败：网络异常', 'error');
+        }
+    }
+
+    // 7. 订单管理相关
+    // 替换原有的 订单相关3个函数，其他代码不变！
+    // 1. 修复：下单功能（handleCreateOrder）
+    async function handleCreateOrder(e) {
+        e.preventDefault();
+        if (!token) {
+            showMsg('请先登录！', 'error');
+            return;
+        }
+
+        // 1. 严格匹配后端参数名（buyerid、productid，全小写，无下划线）
+        const buyerid = document.getElementById('orderBuyerId').value.trim();
+        const productid = document.getElementById('orderProductId').value.trim();
+
+        // 验证参数（确保是数字，匹配后端Integer类型）
+        if (!buyerid || !productid || isNaN(Number(buyerid)) || isNaN(Number(productid))) {
+            showMsg('买家ID和商品ID必须是有效数字！', 'warning');
+            return;
+        }
+
+        try {
+            // 2. 严格匹配后端接口路径（/placeorder，无多余路径）
+            const requestUrl = `${API_BASE}/placeorder?buyerid=${buyerid}&productid=${productid}`;
+            console.log('下单请求URL：', requestUrl); // 调试日志：打印URL
+            console.log('传递的token：', token); // 调试日志：确认token存在
+
+            const response = await fetch(requestUrl, {
+                method: 'GET', // 后端是GET，严格匹配
+                headers: {
+                    'token': token, // 必传token，匹配后端拦截器
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // 3. 调试日志：打印响应状态码（401=token无效，403=权限不足，404=路径错，500=后端报错）
+            console.log('下单响应状态码：', response.status);
+            const rawResponse = await response.text(); // 后端返回String类型的Result JSON
+            console.log('下单后端原始响应：', rawResponse); // 调试日志：查看后端返回的具体内容
+
+            // 4. 解析后端响应（兼容String格式的Result JSON）
+            let result;
+            try {
+                result = JSON.parse(rawResponse); // 后端返回的是"{\"code\":1,\"msg\":\"...\"}"
+            } catch (parseErr) {
+                result = { code: 0, msg: rawResponse }; // 解析失败直接取原始文本
+            }
+
+            // 5. 精准错误提示（匹配后端响应状态）
+            if (response.status === 401) {
+                showMsg('登录已过期，请重新登录！', 'error');
+                handleLogout(); // 自动退出登录
+            } else if (response.status === 403) {
+                showMsg(`下单失败：${result.msg || '无权限（不能购买自己发布的商品）'}`, 'error');
+            } else if (response.status === 404) {
+                showMsg('下单失败：接口路径错误（后端无此接口）', 'error');
+            } else if (response.status === 200 && result.code === 1) {
+                showMsg('下单成功！');
+                document.getElementById('createOrderForm').reset();
+                queryAllOrders(); // 刷新订单列表
+            } else {
+                showMsg(`下单失败：${result.msg || '未知错误'}`, 'error');
+            }
+        } catch (err) {
+            console.error('下单功能异常：', err);
+            showMsg('下单失败：网络异常或后端未启动', 'error');
+        }
+    }
+
+    // 2. 修复：取消订单功能（handleCancelOrder）
+    async function handleCancelOrder(e) {
+        e.preventDefault();
+        if (!token) {
+            showMsg('请先登录！', 'error');
+            return;
+        }
+
+        const buyerid = document.getElementById('cancelBuyerId').value.trim();
+        const productid = document.getElementById('cancelProductId').value.trim();
+
+        // 验证参数（确保是数字）
+        if (!buyerid || !productid || isNaN(Number(buyerid)) || isNaN(Number(productid))) {
+            showMsg('买家ID和商品ID必须是有效数字！', 'warning');
+            return;
+        }
+
+        try {
+            // 严格匹配后端接口路径和参数名
+            const requestUrl = `${API_BASE}/cancelorder?buyerid=${buyerid}&productid=${productid}`;
+            console.log('取消订单请求URL：', requestUrl);
+            console.log('传递的token：', token);
+
+            const response = await fetch(requestUrl, {
+                method: 'GET',
+                headers: {
+                    'token': token,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('取消订单响应状态码：', response.status);
+            const rawResponse = await response.text();
+            console.log('取消订单后端原始响应：', rawResponse);
+
+            let result;
+            try {
+                result = JSON.parse(rawResponse);
+            } catch (parseErr) {
+                result = { code: 0, msg: rawResponse };
+            }
+
+            // 精准错误提示
+            if (response.status === 401) {
+                showMsg('登录已过期，请重新登录！', 'error');
+                handleLogout();
+            } else if (response.status === 403) {
+                showMsg(`取消失败：${result.msg || '无权限（仅买家/卖家可取消）'}`, 'error');
+            } else if (response.status === 404) {
+                showMsg('取消失败：接口路径错误', 'error');
+            } else if (response.status === 200 && result.code === 1) {
+                showMsg('取消订单成功！');
+                document.getElementById('cancelOrderForm').reset();
+                queryAllOrders();
+            } else {
+                showMsg(`取消失败：${result.msg || '订单不存在或已取消'}`, 'error');
+            }
+        } catch (err) {
+            console.error('取消订单功能异常：', err);
+            showMsg('取消失败：网络异常或后端未启动', 'error');
+        }
+    }
+
+    // 3. 修复：查询订单功能（queryAllOrders）
+    async function queryAllOrders() {
+        if (!token) {
+            showMsg('请先登录！', 'error');
+            return;
+        }
+
+        try {
+            // 严格匹配后端查询接口路径
+            const requestUrl = `${API_BASE}/productorder/select/all`;
+            console.log('查询订单请求URL：', requestUrl);
+            console.log('传递的token：', token);
+
+            const response = await fetch(requestUrl, {
+                method: 'GET',
+                headers: {
+                    'token': token,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('查询订单响应状态码：', response.status);
+            const rawResponse = await response.text();
+            console.log('查询订单后端原始响应：', rawResponse);
+
+            // 处理响应（后端成功返回List<ProductOrder>，失败返回401/403的Result字符串）
+            if (response.status === 401) {
+                showMsg('登录已过期，请重新登录！', 'error');
+                handleLogout();
+                document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-500">登录已过期</td></tr>';
+                return;
+            } else if (response.status === 403) {
+                showMsg('无权限查询订单！', 'error');
+                document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-500">无权限查询</td></tr>';
+                return;
+            } else if (response.status === 404) {
+                showMsg('查询失败：接口路径错误', 'error');
+                document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-500">接口不存在</td></tr>';
+                return;
+            }
+
+            // 解析订单列表（后端成功返回JSON数组）
+            let orderList;
+            try {
+                orderList = JSON.parse(rawResponse);
+            } catch (parseErr) {
+                orderList = [];
+                showMsg('查询失败：后端返回数据格式错误', 'error');
+            }
+
+            const tableBody = document.getElementById('orderTableBody');
+            if (Array.isArray(orderList) && orderList.length > 0) {
+                // 严格匹配ProductOrder字段（id、buyer_id、product_id、status、create_time）
+                tableBody.innerHTML = orderList.map(order => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 border-b">${order.id || '未知'}</td>
+                    <td class="px-4 py-3 border-b">${order.buyer_id || '未知'}</td>
+                    <td class="px-4 py-3 border-b">${order.product_id || '未知'}</td>
+                    <td class="px-4 py-3 border-b">${order.status || '已下单'}</td>
+                    <td class="px-4 py-3 border-b">${order.create_time ? order.create_time.split('T')[0] + ' ' + order.create_time.split('T')[1].substring(0, 8) : '未知'}</td>
+                </tr>
+            `).join('');
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">无订单数据（未下单或查询失败）</td></tr>';
+            }
+        } catch (err) {
+            console.error('查询订单功能异常：', err);
+            showMsg('查询失败：网络异常或后端未启动', 'error');
+            document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-500">网络异常</td></tr>';
+        }
+    }
+</script>
+</body>
+</html>
